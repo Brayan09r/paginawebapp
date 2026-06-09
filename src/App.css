@@ -8,3 +8,16 @@
 body {
   font-family: 'Poppins', sans-serif;
 }
+/* ANIMACIÓN DE FONDO AURORA CORPORATIVA - VERSIÓN DEFINITIVA */
+@keyframes aurora-movimiento {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.fondo-aurora {
+  /* Definimos los colores aquí mismo para evitar bloqueos de Tailwind */
+  background: linear-gradient(-45deg, #0B172A, #103460, #052c42, #0B172A);
+  background-size: 400% 400%;
+  animation: aurora-movimiento 8s ease infinite; 
+}

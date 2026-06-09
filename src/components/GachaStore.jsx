@@ -1,66 +1,113 @@
-import { Sparkles, Clock, Coins } from "lucide-react";
+import { Store, Lock, CheckCircle2, Coins } from "lucide-react";
 import { useState } from "react";
-import confetti from "canvas-confetti";
+import toast from "react-hot-toast";
 
-// RECIBIMOS LAS MONEDAS REALES DESDE LA APP
 export default function GachaStore({ coins, setCoins }) {
-  const [isHatching, setIsHatching] = useState(false);
+  // Base de datos local de la tienda
+  const [storePets, setStorePets] = useState([
+    { id: "ignipup", name: "Ignipup", element: "Fuego", price: 0, unlocked: true, image: "/avatars/PYROS.png", color: "from-orange-500 to-red-600" },
+    { id: "shellshock", name: "Shellshock", element: "Agua", price: 20, unlocked: false, image: "/avatars/ONDINA.png", color: "from-blue-500 to-cyan-600" },
+    { id: "glowleaf", name: "Glowleaf", element: "Planta", price: 20, unlocked: false, image: "/avatars/SYLPHA.png", color: "from-emerald-500 to-green-600" },
+    { id: "thunder", name: "Voltflare", element: "Eléctrico", price: 50, unlocked: false, image: "/avatars/THUNDERBOLT.png", color: "from-yellow-400 to-amber-600" }
+  ]);
 
-  const buyEgg = () => {
-    if (coins >= 500) {
-      setCoins((prev) => prev - 500); // DESCONTAMOS 500 MONEDAS
-      setIsHatching(true);
-      confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 }, colors: ['#eab308'] });
-    } else {
-      alert("No tienes suficientes puntos. ¡Ve a hacer un Focus!");
+  const handleBuy = (petId, price, name) => {
+    if (coins < price) {
+      toast.error(`Te faltan ${price - coins} soles/monedas para comprar a ${name}.`, {
+        style: { background: '#1e293b', color: '#fff', border: '1px solid #ef4444' }
+      });
+      return;
     }
+
+    // 1. Descontar el dinero
+    setCoins(prevCoins => prevCoins - price);
+    
+    // 2. Cambiar el estado de la mascota a desbloqueada
+    setStorePets(prevPets => 
+      prevPets.map(pet => 
+        pet.id === petId ? { ...pet, unlocked: true } : pet
+      )
+    );
+
+    toast.success(`¡Has comprado a ${name}!`, {
+      icon: '🎉',
+      style: { background: '#1e293b', color: '#fff', border: '1px solid #10b981' }
+    });
   };
 
   return (
-    // AGREGAMOS "slide-in-from-right" A LA ANIMACIÓN
-    <div className="h-full flex flex-col p-6 space-y-6 overflow-y-auto pb-28 animate-in slide-in-from-right fade-in duration-300">
-      <div className="mt-6 text-center">
-        <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500 uppercase tracking-widest">Incubadora</h2>
-        <p className="text-slate-400 text-sm font-medium">Obtén compañeros legendarios</p>
-      </div>
-
-      <div className="bg-slate-900/80 border border-white/10 rounded-full px-6 py-2 mx-auto flex items-center gap-2 shadow-lg">
-        <Coins size={16} className="text-yellow-400" />
-        <span className="font-bold text-white">{coins} Puntos</span>
-      </div>
-
-      {!isHatching ? (
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 border border-emerald-500/30 rounded-3xl p-8 text-center shadow-[0_0_30px_rgba(16,185,129,0.15)] relative overflow-hidden">
-          <Sparkles className="absolute top-4 right-4 text-emerald-400 opacity-50 animate-pulse" size={24} />
-          <div className="text-8xl mb-6 animate-[avatarFloat_3s_ease-in-out_infinite] drop-shadow-[0_0_20px_rgba(52,211,153,0.4)]">
-            🥚
+    <div className="h-full flex flex-col items-center py-10 px-6 space-y-6 overflow-y-auto pb-28">
+      
+      {/* CABECERA DE LA TIENDA */}
+      <div className="w-full flex justify-between items-center bg-slate-900 border border-slate-700 p-4 rounded-2xl shadow-lg">
+        <div className="flex items-center gap-3">
+          <div className="bg-emerald-500/20 p-2 rounded-xl text-emerald-400">
+            <Store size={24} />
           </div>
-          <h3 className="text-xl font-black text-white mb-2">Huevo Misterioso</h3>
-          <p className="text-sm text-slate-400 mb-6">Contiene una mascota de rareza aleatoria. Requiere 2 horas de Focus para eclosionar.</p>
-          <button 
-            onClick={buyEgg} 
-            className={`w-full font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg ${coins >= 500 ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/30' : 'bg-slate-700 text-slate-400 cursor-not-allowed'}`}
-          >
-            <Coins size={18} /> Comprar por 500 Pts
-          </button>
+          <div>
+            <h2 className="text-xl font-black text-white">Tienda</h2>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Adquiere aliados</p>
+          </div>
         </div>
-      ) : (
-        <div className="bg-gradient-to-br from-indigo-900 to-slate-900 border border-indigo-500/50 rounded-3xl p-8 text-center shadow-[0_0_40px_rgba(99,102,241,0.2)]">
-          <div className="text-8xl mb-6 animate-pulse drop-shadow-[0_0_30px_rgba(99,102,241,0.8)]">
-            🐣
-          </div>
-          <h3 className="text-xl font-black text-indigo-300 mb-2">Incubando...</h3>
-          <div className="flex justify-center items-center gap-2 text-slate-300 mb-4 font-bold">
-            <Clock size={16} className="text-indigo-400" /> 02:00:00 restantes
-          </div>
-          <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden border border-white/10">
-            <div className="h-full bg-gradient-to-r from-indigo-600 to-purple-500 w-[15%] relative">
-              <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+        
+        {/* INDICADOR DE SALDO */}
+        <div className="flex items-center gap-2 bg-slate-800 border border-yellow-500/30 px-4 py-2 rounded-xl">
+          <Coins size={18} className="text-yellow-400" />
+          <span className="font-black text-yellow-400 text-lg">{coins}</span>
+        </div>
+      </div>
+
+      {/* GRILLA DE MASCOTAS */}
+      <div className="w-full grid grid-cols-2 gap-4">
+        {storePets.map((pet) => (
+          <div 
+            key={pet.id} 
+            className={`relative flex flex-col items-center p-4 rounded-2xl border-2 transition-all ${
+              pet.unlocked 
+                ? 'bg-slate-800/80 border-slate-600' 
+                : 'bg-slate-900 border-slate-800'
+            }`}
+          >
+            {/* ETIQUETA DE ESTADO */}
+            <div className="absolute top-2 right-2">
+              {pet.unlocked ? (
+                <CheckCircle2 size={18} className="text-emerald-500" />
+              ) : (
+                <Lock size={18} className="text-slate-500" />
+              )}
+            </div>
+
+            {/* AVATAR (Con filtro gris si está bloqueado) */}
+            <div className={`w-20 h-20 rounded-full bg-gradient-to-tr ${pet.color} p-1 mb-3 ${!pet.unlocked && 'grayscale opacity-40'}`}>
+              <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center">
+                 {/* NOTA: Asegúrate de que las rutas de las imágenes coincidan con tus archivos en /public */}
+                 <img src={pet.image} alt={pet.name} className="w-14 h-14 object-contain" />
+              </div>
+            </div>
+
+            <h3 className={`font-bold text-sm mb-1 ${pet.unlocked ? 'text-white' : 'text-slate-400'}`}>
+              {pet.name}
+            </h3>
+
+            {/* BOTÓN DE ACCIÓN CONDICIONAL */}
+            <div className="w-full mt-auto pt-2">
+              {pet.unlocked ? (
+                <button disabled className="w-full bg-slate-700 text-slate-400 text-xs font-bold py-2 rounded-lg cursor-not-allowed">
+                  ADQUIRIDO
+                </button>
+              ) : (
+                <button 
+                  onClick={() => handleBuy(pet.id, pet.price, pet.name)}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold py-2 rounded-lg shadow-lg transition-all active:scale-95 flex items-center justify-center gap-1"
+                >
+                  S/ {pet.price}
+                </button>
+              )}
             </div>
           </div>
-          <p className="text-[10px] text-slate-400 font-bold uppercase mt-4">Mantente en Focus para avanzar</p>
-        </div>
-      )}
+        ))}
+      </div>
+
     </div>
   );
 }

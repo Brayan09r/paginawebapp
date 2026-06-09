@@ -26,7 +26,7 @@ export default function App() {
       )}
       
       {view === VIEWS.PET_SELECT && (
-        <CharacterSelect onConfirm={() => setView(VIEWS.APP)} setActivePet={setActivePet} />
+        <CharacterSelect onNext={() => setView(VIEWS.APP)} setActivePet={setActivePet} />
       )}
 
       {view === VIEWS.APP && (

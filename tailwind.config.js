@@ -6,22 +6,17 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        sapphire: {
-          900: '#0F2841', // Azul Profundo Corporativo
-          950: '#081726', // Fondo principal oscuro
+      // --- AGREGA ESTO ---
+      keyframes: {
+        'gradient-bg': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
         },
-        electric: {
-          500: '#FF5A00', // Naranja Eléctrico
-          600: '#E65100',
-        },
-        emerald: {
-          500: '#10B981', // Acento de Progreso
-        }
       },
-      fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
-      }
+      animation: {
+        'gradient-slow': 'gradient-bg 15s ease infinite',
+      },
+      // --------------------
     },
   },
   plugins: [],
