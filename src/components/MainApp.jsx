@@ -29,13 +29,11 @@ export default function MainApp({ hero, activePet, setActivePet }) {
     { id: "thunder", name: "Voltflare", element: "Eléctrico", price: 60, unlocked: false, image: "/avatars/THUNDERBOLT.png", color: "from-yellow-400 to-amber-600" }
   ]);
 
-
   // LÓGICA DE SEGURIDAD: Si no hay mascota, forzamos a que elija una
   if (!activePet) {
     return <CharacterSelect setActivePet={setActivePet} onNext={() => setActiveTab("focus")} />;
   }
 
-  
   const handleReward = (gainedXp, gainedPoints) => {
     if (!activePet) return;
 
@@ -93,7 +91,7 @@ export default function MainApp({ hero, activePet, setActivePet }) {
     }
   };
 
-return (
+  return (
     <div className={`relative h-screen w-full md:max-w-3xl lg:max-w-5xl mx-auto overflow-hidden transition-colors duration-500 ${theme === "dark" ? "bg-[#0B172A] text-white" : "bg-slate-50 text-[#0B172A]"}`}>
       
       {/* INYECCIÓN DIRECTA DE CSS (A prueba de fallos) */}
@@ -112,13 +110,13 @@ return (
         `}
       </style>
 
-      {/* CAPA DE FONDO ANIMADO USANDO LA CLASE MÁGICA */}
       {theme === "dark" && (
         <div className="absolute inset-0 z-0 fondo-magico opacity-80 pointer-events-none"></div>
       )}
 
       <Toaster position="top-center" reverseOrder={false} />
-{/* PESTAÑA: HOME RESPONSIVA (Estética Clásica Dorada) */}
+      
+      {/* PESTAÑA: HOME */}
       {activeTab === "home" && (
         <div className="relative z-10 h-full flex flex-col py-6 md:py-10 px-4 md:px-8 overflow-y-auto pb-28">
           
@@ -216,7 +214,7 @@ return (
 
                      {/* Tarjeta 3 Clásica */}
                      <div className="w-full shrink-0 px-1">
-                       <div onClick={() => setActiveTab("characterSelect")} className="w-full h-24 bg-[#0d47a1] rounded-2xl p-4 cursor-pointer flex items-center justify-between shadow-lg">
+                       <div onClick={() => setActiveTab("inventory")} className="w-full h-24 bg-[#0d47a1] rounded-2xl p-4 cursor-pointer flex items-center justify-between shadow-lg">
                          <div className="flex items-center gap-3">
                            <div className="w-12 h-12 rounded-xl bg-white/10 text-white flex items-center justify-center"><Backpack size={24} /></div>
                            <div>
@@ -263,7 +261,7 @@ return (
                     <div className="bg-white/20 text-white text-sm font-bold px-4 py-2 rounded-lg">Entrar</div>
                   </div>
 
-                  <div onClick={() => setActiveTab("characterSelect")} className="w-full bg-[#0d47a1] rounded-2xl p-5 cursor-pointer flex items-center justify-between shadow-lg hover:scale-[1.02] transition-transform">
+                  <div onClick={() => setActiveTab("inventory")} className="w-full bg-[#0d47a1] rounded-2xl p-5 cursor-pointer flex items-center justify-between shadow-lg hover:scale-[1.02] transition-transform">
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 rounded-xl bg-white/10 text-white flex items-center justify-center"><Backpack size={28} /></div>
                       <div>
@@ -283,9 +281,13 @@ return (
       {/* RENDERIZADO DE VISTAS */}
       {activeTab === "characterSelect" && <CharacterSelect setActivePet={setActivePet} onNext={() => setActiveTab("home")} />}
       {activeTab === "focus" && <Timer activePet={activePet} onStart={() => setIsFocusing(true)} onFinish={() => { setActiveTab("home"); setIsFocusing(false); }} onReward={handleReward} />}
-      {activeTab === "store" && <GachaStore coins={coins} setCoins={setCoins} petCatalog={petCatalog} setPetCatalog={setPetCatalog} />}
+      {activeTab === "store" && (
+        <GachaStore coins={coins} setCoins={setCoins} petCatalog={petCatalog} setPetCatalog={setPetCatalog} />
+      )}
       {activeTab === "missions" && <Missions />}
-      {activeTab === "inventory" && <Inventory activePet={activePet} setActivePet={setActivePet} />}
+      {activeTab === "inventory" && (
+        <Inventory petCatalog={petCatalog} activePet={activePet} setActivePet={setActivePet} />
+      )}
       {activeTab === "leaderboard" && <Leaderboard />}
       {activeTab === "multiplayer" && <Multiplayer />}
 
@@ -314,7 +316,7 @@ return (
           </button>
         </nav>
       )}
-
+        
       {/* MODAL DE SUBIDA DE NIVEL */}
       {levelUpModal && (
         <div className="absolute inset-0 z-[100] bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-300">
